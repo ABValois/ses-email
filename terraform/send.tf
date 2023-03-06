@@ -2,17 +2,14 @@
 # Includes DKIM, DMARC, and send SPF
 
 resource "aws_ses_domain_identity" "ses_email" {
-  provider = aws.acm
-  domain   = var.domain
+  domain = var.domain
 }
 
 resource "aws_ses_domain_dkim" "ses_email" {
-  provider = aws.acm
-  domain   = aws_ses_domain_identity.ses_email.domain
+  domain = aws_ses_domain_identity.ses_email.domain
 }
 
 resource "aws_ses_domain_mail_from" "ses_email" {
-  provider               = aws.acm
   domain                 = aws_ses_domain_identity.ses_email.domain
   mail_from_domain       = "noreply.${aws_ses_domain_identity.ses_email.domain}"
   behavior_on_mx_failure = "UseDefaultValue"
@@ -52,7 +49,6 @@ resource "aws_route53_record" "ses_email_dmarc_spf" {
 }
 
 resource "aws_ses_domain_identity_verification" "ses_email" {
-  provider   = aws.acm
   domain     = aws_ses_domain_identity.ses_email.id
   depends_on = [aws_route53_record.ses_email]
 }
